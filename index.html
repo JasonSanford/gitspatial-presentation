@@ -270,6 +270,43 @@
                 </section>
 
                 <section>
+                    <h3>Creating Features</h3>
+                    <ul>
+                        <li>During syncing, loop through the array of features and insert into the database</li>
+                        <li>GeoJSON geometry is converted to GeoDjango (GEOS) geometry objects</li>
+                        <li>Other properties are just stored as a dumb string and inserted as text</li>
+                    </ul>
+                    <pre><code>import json
+
+from django.contrib.gis.geos import GEOSGeometry
+
+from models import Feature
+
+# We have a feature dict in context that looks like:
+feature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Wynkoop Brewing Company",
+        "floors": 3,
+        "beers_on_tap": [
+            "Rail Yard Ale",
+            "Rocky Mountain Oyster Stout"
+        ]
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.998531, 39.753459]
+    }
+}
+
+geom = GEOSGeometry(json.dumps(feature['geometry']))
+properties = json.dumps(feature['properties'])
+
+feature = Feature(geom=geom, properties=properties)
+feature.save()</code></pre>
+                </section>
+
+                <section>
                     <h2>How it Really Works</h2>
                 </section>
 
@@ -306,6 +343,14 @@ Feature.objects.filter(geom__distance_lte=(point, D(m=distance))).geojson()</cod
                         <li>GitSpatial does lots of background processing</li>
                         <li>We need a way to do work outside of the request/response cycle</li>
                         <li>It could take a while to sync lots of repos for a user - We need a way to queue those up</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Postgres/PostGIS</h3>
+                    <p>An extension to PostgreSQL that adds spatial indexes and hundreds of functions that let you do fancy things like:</p>
+                    <ul>
+                        <li></li>
                     </ul>
                 </section>
 
