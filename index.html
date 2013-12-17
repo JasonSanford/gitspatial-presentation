@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>reveal.js - The HTML Presentation Framework</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Hakim El Hattab">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h1>GitSpatial</h1>
+                    <h3>A Spatial API for your GitHub-hosted GeoJSON</h3>
+                    <p>
+                        <small>by <a href="http://geojason.info">Jason Sanford</a> / <a href="http://twitter.com/jcsanford">@JCSanford</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2 style="text-transform: none;">What is GeoJSON?</h2>
+                    <p>
+                        A simple text format for representing geographic data
+                    </p>
+                </section>
+
+                <!-- Example of nested vertical slides -->
+                <section>
+                    <section>
+                        <h2>Points</h2>
+                        <pre><code>{
+    "type": "Point",
+    "coordinates": [
+        -104.998531,
+        39.753459
+    ]
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>LineStrings</h2>
+                        <pre><code>{
+    "type": "LineString",
+    "coordinates": [
+        [-104.998507, 39.753776],
+        [-104.997611, 39.753079],
+        [-104.998818, 39.752147],
+        [-104.999682, 39.752825]
+    ]
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>Polygons</h2>
+                        <pre><code>{
+    "type": "Polygon",
+    "coordinates": [
+        [
+            [-104.998521, 39.753770],
+            [-104.997625, 39.753077],
+            [-104.998824, 39.752166],
+            [-104.999696, 39.752830],
+            [-104.998521, 39.753770]
+        ]
+    ]
+}</code></pre>
+                    </section>
+                    <section>
+                        <h2>Features</h2>
+                        <h4>Join Attributes to Geometry</h4>
+                        <pre><code>{
+    "type": "Feature",
+    "properties": {
+        "name": "Wynkoop Brewing Company",
+        "floors": 3,
+        "beers_on_tap": [
+            "Rail Yard Ale",
+            "Rocky Mountain Oyster Stout"
+        ]
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            -104.998531,
+            39.753459
+        ]
+    }
+}
+</code></pre>
+                    </section>
+                </section>
+
+                <section data-transition="none">
+                    <h3>GitHub automatically Renders GeoJSON Files</h3>
+                    <img src="img/geojson-file.png" />
+                </section>
+
+                <section data-transition="none">
+                    <h3>GitHub automatically Renders GeoJSON Files</h3>
+                    <img src="img/geojson-map.png" />
+                </section>
+
+                <section>
+                    <h2>That's cool, but ... </h2>
+                    <p>
+                        What if:
+                    </p>
+                    <ul>
+                        <li>I have a lot of features. I can't show them all on the map at the same time.</li>
+                        <li>I only care about features in a specific area.</li>
+                        <li>I want to find the nearest feature to me.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Build an API!</h2>
+                    <p>I want:</p>
+                    <ul>
+                        <li>to perform bounding box queries</li>
+                        <li>to perform point + radius queries</li>
+                        <li>updates to my GeoJSON (commits) to be reflected in the API almost immediately</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>A Bounding Box Query</h2>
+                    <h3><small>Show me all the parks in the current map window</small></h3>
+                    <pre style="width: 140%; margin-left: -150px;">http://gitspatial.com/api/v1/<span style="color: #cccc00;">:github_user</span>/<span style="color: #cccc00;">:github_repo</span>/<span style="color: #cccc00;">:file_name</span>?bbox=<span style="color: #cccc00;">:min_lng</span>,<span style="color: #cccc00;">:min_lat</span>,<span style="color: #cccc00;">:max_lng</span>,<span style="color: #cccc00;">:max_lat</span></pre>
+                    <pre style="width: 140%; margin-left: -150px;">http://gitspatial.com/api/v1/JasonSanford/mecklenburg-gis-opendata/parks?bbox=-80.8633,35.2071,-80.8158,35.2488</pre>
+                </section>
+
+                <section>
+                    <h2>A Point + Radius Query</h2>
+                    <h3><small>Show me the schools within 4000 meters of this point</small></h3>
+                    <pre style="width: 140%; margin-left: -150px;">http://gitspatial.com/api/v1/<span style="color: #cccc00;">:github_user</span>/<span style="color: #cccc00;">:github_repo</span>/<span style="color: #cccc00;">:file_name</span>?lat=<span style="color: #cccc00;">:latitude</span>&lon=<span style="color: #cccc00;">:longitude</span>&distance=<span style="color: #cccc00;">:distance</span></pre>
+                    <pre style="width: 140%; margin-left: -150px;">http://gitspatial.com/api/v1/JasonSanford/mecklenburg-gis-opendata/schools.geojson?lat=35.256&lon=-80.809&distance=4000</pre>
+                </section>
+
+                <section>
+                    <h2>The Response</h2>
+                    <p>A GeoJSON FeatureCollection we can use to display on a web map or consume in an app</p>
+                    <pre><code>{
+    "count": 1000,
+    "total_count": 1254,
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-80.838923, 35.220129]
+            },
+            "type": "Feature",
+            "properties": {
+                "city": "CHARLOTTE",
+                "address": "800 EAST 3RD ST",
+                "type": "NEIGHBORHOOD PARK",
+                "name": "MARSHALL NEIGHBORHOOD PARK"
+            },
+            "id": 31902
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-80.845156, 35.391193]
+            },
+            "type": "Feature",
+            "properties": {
+                "city": "HUNTERSVILLE",
+                "address": "",
+                "type": "COMMUNITY PARK",
+                "name": "HUNTERSVILLE ATHLETIC COMMUNITY PARK"
+            },
+            "id": 31901
+        }
+    ]
+}</code></pre>
+                </section>
+
+                <section>
+                    <p>A dense feature set - utility poles for a city</p>
+                    <p>We can update with each map pan</p>
+                    <img src="img/pan.gif" />
+                </section>
+
+                <section>
+                    <h2>The Geo Hello World</h2>
+                    <h4>Where is the nearest cofee shop? <small>(from Wynkoop)</small></h4>
+                    <pre style="width: 140%; margin-left: -150px;">http://gitspatial.com/api/v1/JasonSanford/colorado-osm/cafes.geojson?lat=39.75345&lon=-104.99853&distance=300</pre>
+                    <pre><code>{
+    "count": 1,
+    "total_count": 1,
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-105.0009146, 39.751674]
+            },
+            "type": "Feature",
+            "properties": {
+                "amenity": "cafe",
+                "name": "Tattered Cover"
+            }
+        }
+    ]
+}</code></pre>
+                </section>
+
+                <section>
+                    <h2>Thanks!</h2>
+                    <ul>
+                        <li><a href="http://gitspatial.com">The app</a></li>
+                        <li><a href="https://github.com/JasonSanford/gitspatial">Source code on GitHub</a></li>
+                        <li><a href="http://geojason.info/2013/gitspatial-a-spatial-api-for-your-github-hosted-geojson/">A blog post with more details</a></li>
+                    </ul>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Parallax scrolling
+                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                // parallaxBackgroundSize: '2100px 900px',
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
