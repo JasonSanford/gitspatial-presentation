@@ -250,8 +250,8 @@
                 <section>
                     <h3>Add a Service Hook</h3>
                     <img src="img/web-hook.png" />
-                    <p>Use the GitHub API to add a WebHook URL.</p>
                     <ul>
+                        <li>The GitHub API is used to add a WebHook URL</li>
                         <li>GitHub will POST relevant data here whenever you push changes to your repo.</li>
                         <li>We'll update your features if you've made any changes to synced feature sets.</li>
                     </ul>
@@ -267,6 +267,46 @@
                     <h3>Feature Set Details</h3>
                     <img src="img/feature-set-page.png" />
                     <p>Once a feature set is synced, you'll see page that lets you preview your features and gives some example API calls for both bounding box and point + radius queries.</p>
+                </section>
+
+                <section>
+                    <h2>How it Really Works</h2>
+                </section>
+
+                <section>
+                    <h3>Django</h3>
+                    <ul>
+                        <li>I use Django for my day job - Quickest way to get up and running</li>
+                        <li>Using GeoDjango we can do fancy spatial queries very easily.</li>
+                    </ul>
+                    <pre><code>from django.contrib.gis.geos.point import Point
+from django.contrib.gis.measure import D
+
+lat = request.GET['lat']
+lon = request.GET['lon']
+distance = request.GET['distance']
+point = Point(x=lon, y=lat, srid=4326)
+
+Feature.objects.filter(geom__distance_lte=(point, D(m=distance))).geojson()</code></pre>
+                </section>
+
+                <section>
+                    <h3>Python Social Auth</h3>
+                    <ul>
+                        <li>Super-easy 3rd party authentication/authorization</li>
+                        <li>Lots of different providers: GitHub, Facebook, Google, Twitter, many many more ...</li>
+                        <li>Piggybacks Django's built-in auth backend</li>
+                        <li>Stores necessary access keys in the database so API request can be made on behalf of the user</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Celery</h3>
+                    <ul>
+                        <li>GitSpatial does lots of background processing</li>
+                        <li>We need a way to do work outside of the request/response cycle</li>
+                        <li>It could take a while to sync lots of repos for a user - We need a way to queue those up</li>
+                    </ul>
                 </section>
 
                 <section>
